@@ -1,6 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import {CommonModule} from '@angular/common';
+import { Component} from '@angular/core';
+import {Store} from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 import {CounterService} from 'src/app/counter.service';
+import {init} from 'src/app/ngrx-store/counter.actions';
+import {selectDoubleCounter} from 'src/app/ngrx-store/counter.selectots';
 
 
 @Component({
@@ -8,22 +12,31 @@ import {CounterService} from 'src/app/counter.service';
   templateUrl: './counter-output.component.html',
   styleUrls: ['./counter-output.component.css'],
   standalone: true,
+  imports:[CommonModule]
+
 })
-export class CounterOutputComponent implements OnInit, OnDestroy {
-  counter = 0;
-  counterServiceSub?: Subscription;
+export class CounterOutputComponent{
+  // counter = 0;
+  // counterServiceSub?: Subscription;
 
-  constructor(private counterService: CounterService) {}
+  count$!:Observable<number>
+  countDouble$!:Observable<number>
 
-  ngOnInit(): void {
-    this.counterServiceSub = this.counterService.counterChanged.subscribe(
-      (newVal) => (this.counter = newVal)
-    );
+  constructor(private counterService: CounterService,
+    private store:Store<{counter:number}>) {
+    this.count$ = store.select('counter',)
+    this.countDouble$ = store.select(selectDoubleCounter)
   }
 
-  ngOnDestroy(): void {
-    if (this.counterServiceSub) {
-      this.counterServiceSub.unsubscribe();
-    }
-  }
+  // ngOnInit(): void {
+  //   this.counterServiceSub = this.counterService.counterChanged.subscribe(
+  //     (newVal) => (this.counter = newVal)
+  //   );
+  // }
+
+  // ngOnDestroy(): void {
+  //   if (this.counterServiceSub) {
+  //     this.counterServiceSub.unsubscribe();
+  //   }
+  // }
 }
